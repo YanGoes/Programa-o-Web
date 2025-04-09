@@ -1,0 +1,165 @@
+<!-- Código HTML -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Custo por Metro Quadrado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="CalculadoraMetroQuadrado.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora Custo por Metro Quadrado</h1>
+        <form id="compraForm" onsubmit="calcular(); return false;">
+            <div class="mb-3">
+                <label for="areaTotal" class="form-label">Área Total da Obra</label>
+                <input type="number" id="areaTotal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="custoMateriais" class="form-label">Custo total dos Materiais</label>
+                <input type="number" id="custoMateriais" class="form-control" required step="0.01">
+            </div>
+            <div class="mb-3">
+                <label for="custoMaoDeObra" class="form-label">Custo total da Mão de Obra</label>
+                <input type="number" id="custoMaoDeObra" class="form-control" required step="0.01">
+            </div>
+            <button type="submit" class="btn">Calcular</button>
+            <button type="button" class="btn btn-danger" onclick="limpar()">Limpar</button>
+        </form>
+        <hr>
+        <div id="res" class="row">
+            <!-- Resultado da grid vai aparecer aqui -->
+        </div>
+    </div>
+
+    <script src="CalculadoraMetroQuadrado.js"></script>
+</body>
+</html>
+
+
+// Código JS vinculado com Firebase, faça as alterações necessárias
+const firebaseConfig = {
+    apiKey: "AIzaSyBSEvxCRC5-LKuFN6Z0ioQakKRqXxR_gqU",
+    authDomain: "projeto-x---programacao-web.firebaseapp.com",
+    projectId: "projeto-x---programacao-web",
+    storageBucket: "projeto-x---programacao-web.firebasestorage.app",
+    messagingSenderId: "611253358430",
+    appId: "1:611253358430:web:00c8287c5b3917098149cf",
+    measurementId: "G-HV4Q564MWS"
+};
+
+let res = document.getElementById("res");
+
+async function calcular() {
+    const areaTotal = parseFloat(document.getElementById('areaTotal').value);
+    const custoMateriais = parseFloat(document.getElementById('custoMateriais').value);
+    const custoMaoDeObra = parseFloat(document.getElementById('custoMaoDeObra').value);
+
+    if (isNaN(areaTotal) || isNaN(custoMateriais) || isNaN(custoMaoDeObra) || areaTotal <= 0 || custoMateriais <= 0 || custoMaoDeObra < 0) {
+        alert("Por favor, insira valores válidos.");
+        return;
+    }
+
+    const custoM2 = (custoMateriais + custoMaoDeObra) / areaTotal;
+
+    res.innerHTML = `
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Resultado</h5>
+                    <p class="card-text"><strong>Área Total:</strong> ${areaTotal} m²</p>
+                    <p class="card-text"><strong>Custo Total dos Materiais:</strong> R$ ${custoMateriais.toFixed(2).replace('.', ',')}</p>
+                    <p class="card-text"><strong>Custo Total da Mão de Obra:</strong> R$ ${custoMaoDeObra.toFixed(2).replace('.', ',')}</p>
+                    <p class="card-text"><strong>Custo por Metro Quadrado:</strong> R$ ${custoM2.toFixed(2).replace('.', ',')}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function limpar() {
+    document.getElementById('compraForm').reset();
+    res.innerHTML = '';
+}
+
+/* Código CSS */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mb-3 {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#res {
+  margin-top: 20px;
+}
+
+.btn {
+  width: 6.5em;
+  height: 2.3em;
+  margin: 0.5em;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 0.625em;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.btn:hover {
+  color: black;
+}
+
+.btn:after {
+  content: "";
+  background: white;
+  position: absolute;
+  z-index: -1;
+  left: -20%;
+  right: -20%;
+  top: 0;
+  bottom: 0;
+  transform: skewX(-45deg) scale(0, 1);
+  transition: all 0.5s;
+}
+
+.btn:hover:after {
+  transform: skewX(-45deg) scale(1, 1);
+}
