@@ -1,0 +1,75 @@
+<!-- Código HTML da calculadora -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Quadrado e Cubo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Calculadora de Quadrado e Cubo</h1>
+        <form id="numeroForm">
+            <div class="form-group">
+                <label for="numero">Digite um número:</label>
+                <input type="number" id="numero" name="numero" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="select">Escolha a operação:</label>
+                <select id="select" class="form-control">
+                    <option value="quadrado">Quadrado</option>
+                    <option value="cubo">Cubo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </form>
+
+        <!-- Resultado -->
+        <div id="resultadoContainer" class="alert alert-info mt-4 d-none">
+            O resultado é: <span id="resultado"></span>
+        </div>
+    </div>
+</body>
+</html>
+
+
+//Código JS da calculadora (fiz arquivos separados mas se quiser deixar o JS junto do HTML também pode)
+
+// Adiciona o evento ao formulário
+document.getElementById('numeroForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Evita o envio do formulário
+
+    // Obtém os valores do número e da operação escolhida
+    const numero = parseFloat(document.getElementById('numero').value);
+    const operacao = document.getElementById('select').value;
+
+    let resultado;
+
+    // Calcula com base na operação escolhida
+    if (operacao === 'quadrado') {
+        resultado = calcularQuadrado(numero);
+    } else if (operacao === 'cubo') {
+        resultado = calcularCubo(numero);
+    }
+
+    // Exibe o resultado na página
+    const resultadoContainer = document.getElementById('resultadoContainer');
+    document.getElementById('resultado').textContent = resultado;
+    resultadoContainer.classList.remove('d-none'); // Torna o alerta visível
+});
+
+// Função para calcular o quadrado
+function calcularQuadrado(numero) {
+    return numero * numero;
+}
+
+// Função para calcular o cubo
+function calcularCubo(numero) {
+    return numero * numero * numero;
+}
