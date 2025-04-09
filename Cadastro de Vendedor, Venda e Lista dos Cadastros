@@ -1,0 +1,197 @@
+// Código JS, fiz esse código vinculando o banco de dados dele com o Firebase, caso queira usá-lo, adicione o firebase e adeque o for necessário para o funcionamento (colections)
+
+// Atualizando o valor do desconto ao inserir o valor da venda
+document.getElementById('valorVenda').addEventListener('input', function () {
+    const valorVenda = parseFloat(document.getElementById('valorVenda').value);
+    if (valorVenda) {
+        const desconto = valorVenda * 0.05;
+        document.getElementById('desconto').value = desconto.toFixed(2);
+    }
+});
+
+// Adiciona um listener para o formulário de cadastro
+document.getElementById('cadastroForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Captura os valores do formulário
+    const nomeVendedor = document.getElementById('nomeVendedor').value;
+    const valorVenda = parseFloat(document.getElementById('valorVenda').value);
+    const desconto = parseFloat(document.getElementById('desconto').value);
+
+    console.log('Nome do Vendedor:', nomeVendedor);
+    console.log('Valor da Venda:', valorVenda);
+    console.log('Desconto:', desconto);
+
+    // Verificação se os dados estão corretos
+    if (!nomeVendedor || isNaN(valorVenda) || isNaN(desconto)) {
+        alert("Por favor, preencha todos os campos corretamente.");
+        return;
+    }
+
+    cadastrarCompra(nomeVendedor, valorVenda, desconto);
+});
+
+// Função para cadastrar uma compra no Firestore
+function cadastrarCompra(nomeVendedor, valorVenda, desconto) {
+    db.collection('compras').add({
+        nomeVendedor: nomeVendedor,
+        valorVenda: valorVenda,
+        desconto: desconto,
+        valorFinal: valorVenda - desconto
+    })
+    .then(() => {
+        alert('Compra cadastrada com sucesso!');
+        document.getElementById('cadastroForm').reset();
+        listarCompras(); // Atualiza a lista de compras
+    })
+    .catch((error) => {
+        console.error('Erro ao cadastrar compra: ', error);
+        alert('Erro ao cadastrar compra. Tente novamente.');
+    });
+}
+
+// Função para listar as compras cadastradas
+function listarCompras() {
+    const listaCompras = document.getElementById('listaCompras');
+    listaCompras.innerHTML = ''; // Limpa a lista antes de atualizar
+
+    db.collection('compras').get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const compra = doc.data();
+            const itemLista = document.createElement('li');
+            itemLista.classList.add('compras-list-item');
+
+            itemLista.innerHTML = `
+                <span>Vendedor:</span> ${compra.nomeVendedor} <br>
+                <span>Valor da Venda:</span> R$ ${compra.valorVenda} <br>
+                <span>Desconto:</span> R$ ${compra.desconto} <br>
+                <span>Valor Final:</span> R$ ${compra.valorFinal}
+            `;
+            listaCompras.appendChild(itemLista);
+        });
+    })
+    .catch((error) => {
+        console.error('Erro ao buscar compras: ', error);
+    });
+}
+
+
+
+// Carrega a lista de compras ao carregar a página
+window.onload = listarCompras;
+
+
+// Código HTML ja com o CSS e Bootstrap (fique atento ao nome do arquivo JS para que o JS funcione corretamente)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Compras - Loja</title>
+    <!-- Incluindo o Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEJx3rP4R2hvKxYvYtdkt8J+bqphbc8H8JExz4xg8Mw93cUw6ddvblgPBo5u6" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #555;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px;
+            font-size: 1.1em;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .btn-primary {
+            width: 100%;
+            font-size: 1.2em;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .alert {
+            margin-top: 40px;
+        }
+        .alert h5 {
+            font-size: 1.2em;
+            color: #28a745;
+        }
+        #listaCompras {
+            list-style-type: none;
+            padding: 0;
+        }
+        .compras-list-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .compras-list-item span {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cadastro de Compras</h1>
+        <form id="cadastroForm">
+            <div class="form-group mb-3">
+                <label for="nomeVendedor">Nome do Vendedor</label>
+                <input type="text" class="form-control" id="nomeVendedor" placeholder="Digite o nome do vendedor" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="valorVenda">Valor da Venda (R$)</label>
+                <input type="number" class="form-control" id="valorVenda" placeholder="Digite o valor da venda" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar Compra</button>
+        </form>
+
+        <div class="alert alert-success mt-4" role="alert">
+            <h5>Compras Cadastradas:</h5>
+            <ol id="listaCompras"></ol>
+        </div>
+    </div>
+
+    <!-- Script para o Firebase e Funcionalidade -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+   
+    <!-- Link para o script externo -->
+    <script src="atividadeCompra.js"></script>
+</body>
+</html>
