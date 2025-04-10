@@ -44,13 +44,6 @@
 
 // Código JS vinculado com Firebase, faça as alterações necessárias
 const firebaseConfig = {
-    apiKey: "AIzaSyBSEvxCRC5-LKuFN6Z0ioQakKRqXxR_gqU",
-    authDomain: "projeto-x---programacao-web.firebaseapp.com",
-    projectId: "projeto-x---programacao-web",
-    storageBucket: "projeto-x---programacao-web.firebasestorage.app",
-    messagingSenderId: "611253358430",
-    appId: "1:611253358430:web:00c8287c5b3917098149cf",
-    measurementId: "G-HV4Q564MWS"
 };
 
 let res = document.getElementById("res");
